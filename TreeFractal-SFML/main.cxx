@@ -80,7 +80,7 @@ void redraw(sf::RenderWindow& window, const float windowWidth, const float windo
           initialLength,
           angle,
           0u
-            });
+        });
     }
     drawTrees(window, segments);
 
