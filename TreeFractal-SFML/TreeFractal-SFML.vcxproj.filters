@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TreeFractal-SFML.cpp">
+    <ClCompile Include="main.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
