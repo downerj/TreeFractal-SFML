@@ -3,7 +3,7 @@
 EXECUTABLE = example
 BINDIR = bin
 OBJDIR = obj
-SRCDIR = .
+SRCDIR = src
 CCXXSTD = -std=c++17
 CWARNS = -Wall -Wextra -Werror -Wpedantic -pedantic-errors
 LLIBS = -lsfml-graphics -lsfml-window -lsfml-system

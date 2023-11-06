@@ -145,7 +145,7 @@ xcopy /y $(ProjectDir)sfml-system-2.dll $(OutDir)</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cxx" />
+    <ClCompile Include="src\main.cxx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
