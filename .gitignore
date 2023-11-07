@@ -5,3 +5,4 @@
 **/*.dll
 **/x64/
 SFML-2.6.1/
+**/*.stackdump

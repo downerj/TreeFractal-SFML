@@ -1,18 +1,18 @@
 #include <algorithm>
 #include <array>
-
+#if 0
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
-#include <math.h>
-#else
+#endif // _WIN32
+#endif // 0
 #include <cmath>
-#endif
-
 #include <stack>
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/PrimitiveType.hpp>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif // M_PI
 constexpr auto tau = static_cast<float>(M_PI) * 2.f;
 
 struct TreeSegment {
@@ -36,14 +36,14 @@ void drawTrees(sf::RenderWindow& window, std::stack<TreeSegment>& segments) {
         const auto& currentSegment = segments.top();
         segments.pop();
 
-        const auto& startColor = currentSegment.depth < 5 ? color1 : color2;
+        const auto& startColor = currentSegment.depth < 5u ? color1 : color2;
         const auto& endColor = startColor;
-        const auto line = std::array<sf::Vertex, 2>{
+        const auto line = std::array<sf::Vertex, 2u>{
             sf::Vertex{ currentSegment.start, startColor },
-                sf::Vertex{ currentSegment.end, endColor }
+            sf::Vertex{ currentSegment.end, endColor }
         };
 
-        window.draw(line.data(), 2, sf::PrimitiveType::Lines);
+        window.draw(line.data(), 2u, sf::Lines);
 
         if (currentSegment.depth < maxDepth) {
             const auto newStart = currentSegment.end;
