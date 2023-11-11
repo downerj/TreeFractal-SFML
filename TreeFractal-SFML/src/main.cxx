@@ -1,61 +1,81 @@
 #include <algorithm>
 #include <array>
-
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
 #include <math.h>
 #else
 #include <cmath>
-#endif
-
-#include <stack>
+#endif // _WIN32
+#include <iostream>
+#include <utility>
+#include <vector>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 
 constexpr auto tau = static_cast<float>(M_PI) * 2.f;
 
-struct TreeSegment {
-  sf::Vector2f start;
-  sf::Vector2f end;
-  float length;
-  float angle;
-  unsigned int depth;
+class IterateConditions {
+public:
+  float branchLengthRatio;
+  unsigned int maxDepth;
+  unsigned int depthToSwitchColors;
+  float deltaAngle;
+  sf::Color color1;
+  sf::Color color2;
 
-  TreeSegment() = delete;
+  IterateConditions() : branchLengthRatio(.6f), maxDepth(8u), depthToSwitchColors(5u), deltaAngle(tau / 6.f) {
+    color1 = sf::Color{ 0xffaa00ffu };
+    color2 = sf::Color::Green;
+  }
+
+  sf::Color getColorByDepth(const unsigned int depth) const {
+    return depth < depthToSwitchColors ? color1 : color2;
+  }
 };
 
-void drawTrees(sf::RenderWindow& window, std::stack<TreeSegment>& segments) {
-  constexpr auto branchLengthRatio = .6f;
-  constexpr auto maxDepth = 8u;
-  constexpr auto deltaAngle = tau / 6.f;
-  const auto& color1 = sf::Color{ 0xffaa00ffu };
-  const auto& color2 = sf::Color::Green;
+class TreeBranch {
+public:
+  const sf::Vector2f start;
+  const sf::Vector2f end;
+  const float length;
+  const float angle;
+  const unsigned int depth;
 
-  while (!segments.empty()) {
-    const auto& currentSegment = segments.top();
-    segments.pop();
+  enum class Direction { LEFT, RIGHT };
 
-    const auto& startColor = currentSegment.depth < 5u ? color1 : color2;
+  TreeBranch() = delete;
+
+  TreeBranch growBranch(Direction direction, const IterateConditions& conditions) const {
+    const auto newStart = end;
+    const auto newLength = length * conditions.branchLengthRatio;
+    const auto newAngle = angle + (direction == Direction::LEFT ? conditions.deltaAngle : -conditions.deltaAngle);
+    const auto newEnd = newStart + sf::Vector2f{ std::cos(newAngle) * newLength, std::sin(newAngle) * newLength };
+    const auto newDepth = depth + 1u;
+    return { newStart, newEnd, newLength, newAngle, newDepth };
+  }
+};
+
+void drawTrees(sf::RenderWindow& window, std::vector<TreeBranch>& branches) {
+  const auto conditions = IterateConditions();
+  while (!branches.empty()) {
+    const auto& currentSegment = branches.back();
+    branches.pop_back();
+
+    const auto& startColor = conditions.getColorByDepth(currentSegment.depth);
     const auto& endColor = startColor;
     const auto line = std::array<sf::Vertex, 2u>{
       sf::Vertex{ currentSegment.start, startColor },
-        sf::Vertex{ currentSegment.end, endColor }
+      sf::Vertex{ currentSegment.end, endColor }
     };
 
     window.draw(line.data(), 2u, sf::PrimitiveType::Lines);
 
-    if (currentSegment.depth < maxDepth) {
-      const auto newStart = currentSegment.end;
-      const auto newLength = currentSegment.length * branchLengthRatio;
-      const auto rightAngle = currentSegment.angle - deltaAngle;
-      const auto leftAngle = currentSegment.angle + deltaAngle;
-      const auto rightNewEnd = currentSegment.end + sf::Vector2f{ std::cos(rightAngle) * newLength, std::sin(rightAngle) * newLength };
-      const auto leftNewEnd = currentSegment.end + sf::Vector2f{ std::cos(leftAngle) * newLength, std::sin(leftAngle) * newLength };
-      const auto newDepth = currentSegment.depth + 1u;
-
-      segments.push({ newStart, rightNewEnd, newLength, rightAngle, newDepth });
-      segments.push({ newStart, leftNewEnd, newLength, leftAngle, newDepth });
+    if (currentSegment.depth < conditions.maxDepth) {
+      const auto& branchLeft = currentSegment.growBranch(TreeBranch::Direction::LEFT, conditions);
+      const auto& branchRight = currentSegment.growBranch(TreeBranch::Direction::RIGHT, conditions);
+      branches.push_back(branchLeft);
+      branches.push_back(branchRight);
     }
   }
 }
@@ -65,16 +85,16 @@ void redraw(sf::RenderWindow& window, const float windowWidth, const float windo
 
   const auto trunkStart = sf::Vector2f{ windowWidth / 2.f, windowHeight / 2.f };
   constexpr auto numTrees = 3u;
-  auto initialLength = std::min(windowWidth, windowHeight) / 6.f;
+  const auto initialLength = std::min(windowWidth, windowHeight) / 6.f;
   constexpr auto trunkDeltaAngle = tau / numTrees;
-  std::stack<TreeSegment> segments;
+  auto branches = std::vector<TreeBranch>();
   for (auto t = 0u; t < numTrees; t++) {
     const auto angle = -tau / 4.f + trunkDeltaAngle * t;
     const auto trunkEnd = trunkStart + sf::Vector2f{
       std::cos(angle) * initialLength,
       std::sin(angle) * initialLength
     };
-    segments.push({
+    branches.push_back({
       trunkStart,
       trunkEnd,
       initialLength,
@@ -82,21 +102,21 @@ void redraw(sf::RenderWindow& window, const float windowWidth, const float windo
       0u
     });
   }
-  drawTrees(window, segments);
+  drawTrees(window, branches);
 
   window.display();
 }
 
 int main() {
-  constexpr auto windowWidth = 600u;
-  constexpr auto windowHeight = 600u;
+  auto windowWidth = 600u;
+  auto windowHeight = 600u;
   const auto windowMode = sf::VideoMode{ windowWidth, windowHeight };
   constexpr auto windowTitle = "Tree Fractal";
 
   auto&& window = sf::RenderWindow{ windowMode, windowTitle };
   auto view = window.getDefaultView();
+  window.setFramerateLimit(60);
 
-  redraw(window, windowWidth, windowHeight);
   while (window.isOpen()) {
     auto event = sf::Event();
     while (window.pollEvent(event)) {
@@ -113,14 +133,14 @@ int main() {
         window.close();
         break;
       } else if (event.type == sf::Event::Resized) {
-        const auto width = static_cast<float>(event.size.width);
-        const auto height = static_cast<float>(event.size.height);
-        view.setSize(width, height);
-        view.setCenter(width / 2.f, height / 2.f);
+        windowWidth = static_cast<float>(event.size.width);
+        windowHeight = static_cast<float>(event.size.height);
+        view.setSize(windowWidth, windowHeight);
+        view.setCenter(windowWidth / 2.f, windowHeight / 2.f);
         window.setView(view);
-        redraw(window, width, height);
       }
     }
+    redraw(window, windowWidth, windowHeight);
   }
 
   return 0;
