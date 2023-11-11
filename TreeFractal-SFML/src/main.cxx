@@ -29,21 +29,21 @@ void drawTrees(sf::RenderWindow& window, std::stack<TreeSegment>& segments) {
     constexpr auto branchLengthRatio = .6f;
     constexpr auto maxDepth = 8u;
     constexpr auto deltaAngle = tau / 6.f;
-    const auto& color1 = sf::Color{ 0xffaa00ff };
+    const auto& color1 = sf::Color{ 0xffaa00ffu };
     const auto& color2 = sf::Color::Green;
 
     while (!segments.empty()) {
         const auto& currentSegment = segments.top();
         segments.pop();
 
-        const auto& startColor = currentSegment.depth < 5 ? color1 : color2;
+        const auto& startColor = currentSegment.depth < 5u ? color1 : color2;
         const auto& endColor = startColor;
-        const auto line = std::array<sf::Vertex, 2>{
+        const auto line = std::array<sf::Vertex, 2u>{
             sf::Vertex{ currentSegment.start, startColor },
                 sf::Vertex{ currentSegment.end, endColor }
         };
 
-        window.draw(line.data(), 2, sf::PrimitiveType::Lines);
+        window.draw(line.data(), 2u, sf::PrimitiveType::Lines);
 
         if (currentSegment.depth < maxDepth) {
             const auto newStart = currentSegment.end;
