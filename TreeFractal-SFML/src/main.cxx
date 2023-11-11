@@ -100,8 +100,18 @@ int main() {
   while (window.isOpen()) {
     auto event = sf::Event();
     while (window.pollEvent(event)) {
+      const auto isCtrlPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) or sf::Keyboard::isKeyPressed(sf::Keyboard::RControl);
+      const auto isAltPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) or sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt);
+      const auto isWPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+      const auto isQPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Q);
+      const auto isF4Pressed = sf::Keyboard::isKeyPressed(sf::Keyboard::F4);
+      if ((isCtrlPressed and (isWPressed or isQPressed)) or (isAltPressed and isF4Pressed)) {
+        window.close();
+        break;
+      }
       if (event.type == sf::Event::Closed) {
         window.close();
+        break;
       } else if (event.type == sf::Event::Resized) {
         const auto width = static_cast<float>(event.size.width);
         const auto height = static_cast<float>(event.size.height);
