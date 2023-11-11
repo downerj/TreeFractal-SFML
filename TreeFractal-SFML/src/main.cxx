@@ -102,8 +102,7 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
-            }
-            else if (event.type == sf::Event::Resized) {
+            } else if (event.type == sf::Event::Resized) {
                 const auto width = static_cast<float>(event.size.width);
                 const auto height = static_cast<float>(event.size.height);
                 view.setSize(width, height);
