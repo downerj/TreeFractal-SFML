@@ -17,14 +17,22 @@ constexpr auto tau = static_cast<float>(M_PI) * 2.f;
 
 class IterateConditions {
 public:
-  float branchLengthRatio;
+  float branchLengthRatioCCW;
+  float branchLengthRatioCW;
   unsigned int maxDepth;
   unsigned int depthToSwitchColors;
-  float deltaAngle;
+  float deltaAngleCCW;
+  float deltaAngleCW;
   sf::Color color1;
   sf::Color color2;
 
-  IterateConditions() : branchLengthRatio(.6f), maxDepth(8u), depthToSwitchColors(5u), deltaAngle(tau / 6.f) {
+  IterateConditions() :
+      branchLengthRatioCCW(.6f),
+      branchLengthRatioCW(.6f),
+      maxDepth(8u),
+      depthToSwitchColors(5u),
+      deltaAngleCCW(tau / 6.f),
+      deltaAngleCW(tau / 6.f) {
     color1 = sf::Color{ 0xffaa00ffu };
     color2 = sf::Color::Green;
   }
@@ -42,14 +50,14 @@ public:
   const float angle;
   const unsigned int depth;
 
-  enum class Direction { LEFT, RIGHT };
+  enum class Direction { CCW, CW };
 
   TreeBranch() = delete;
 
   TreeBranch growBranch(Direction direction, const IterateConditions& conditions) const {
     const auto newStart = end;
-    const auto newLength = length * conditions.branchLengthRatio;
-    const auto newAngle = angle + (direction == Direction::LEFT ? conditions.deltaAngle : -conditions.deltaAngle);
+    const auto newLength = length * (direction == Direction::CCW ? conditions.branchLengthRatioCCW : conditions.branchLengthRatioCW);
+    const auto newAngle = angle + (direction == Direction::CCW ? -conditions.deltaAngleCCW : conditions.deltaAngleCW);
     const auto newEnd = newStart + sf::Vector2f{ std::cos(newAngle) * newLength, std::sin(newAngle) * newLength };
     const auto newDepth = depth + 1u;
     return { newStart, newEnd, newLength, newAngle, newDepth };
@@ -72,8 +80,8 @@ void drawTrees(sf::RenderWindow& window, std::vector<TreeBranch>& branches) {
     window.draw(line.data(), 2u, sf::PrimitiveType::Lines);
 
     if (currentSegment.depth < conditions.maxDepth) {
-      const auto& branchLeft = currentSegment.growBranch(TreeBranch::Direction::LEFT, conditions);
-      const auto& branchRight = currentSegment.growBranch(TreeBranch::Direction::RIGHT, conditions);
+      const auto& branchLeft = currentSegment.growBranch(TreeBranch::Direction::CCW, conditions);
+      const auto& branchRight = currentSegment.growBranch(TreeBranch::Direction::CW, conditions);
       branches.push_back(branchLeft);
       branches.push_back(branchRight);
     }
