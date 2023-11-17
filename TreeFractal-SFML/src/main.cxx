@@ -13,134 +13,38 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 
-constexpr auto tau = static_cast<float>(M_PI) * 2.f;
+#include "draw.hxx"
 
-class IterateConditions {
-public:
-  float branchLengthRatioCCW;
-  float branchLengthRatioCW;
-  unsigned int maxDepth;
-  unsigned int depthToSwitchColors;
-  float deltaAngleCCW;
-  float deltaAngleCW;
-  sf::Color color1;
-  sf::Color color2;
-
-  IterateConditions() :
-      branchLengthRatioCCW(.6f),
-      branchLengthRatioCW(.6f),
-      maxDepth(8u),
-      depthToSwitchColors(5u),
-      deltaAngleCCW(tau / 6.f),
-      deltaAngleCW(tau / 6.f) {
-    color1 = sf::Color{ 0xffaa00ffu };
-    color2 = sf::Color::Green;
-  }
-
-  sf::Color getColorByDepth(const unsigned int depth) const {
-    return depth < depthToSwitchColors ? color1 : color2;
-  }
-};
-
-class TreeBranch {
-public:
-  const sf::Vector2f start;
-  const sf::Vector2f end;
-  const float length;
-  const float angle;
-  const unsigned int depth;
-
-  enum class Direction { CCW, CW };
-
-  TreeBranch() = delete;
-
-  TreeBranch growBranch(Direction direction, const IterateConditions& conditions) const {
-    const auto newStart = end;
-    const auto newLength = length * (direction == Direction::CCW ? conditions.branchLengthRatioCCW : conditions.branchLengthRatioCW);
-    const auto newAngle = angle + (direction == Direction::CCW ? -conditions.deltaAngleCCW : conditions.deltaAngleCW);
-    const auto newEnd = newStart + sf::Vector2f{ std::cos(newAngle) * newLength, std::sin(newAngle) * newLength };
-    const auto newDepth = depth + 1u;
-    return { newStart, newEnd, newLength, newAngle, newDepth };
-  }
-};
-
-void drawTrees(sf::RenderWindow& window, std::vector<TreeBranch>& branches) {
-  const auto conditions = IterateConditions();
-  while (!branches.empty()) {
-    const auto& currentSegment = branches.back();
-    branches.pop_back();
-
-    const auto& startColor = conditions.getColorByDepth(currentSegment.depth);
-    const auto& endColor = startColor;
-    const auto line = std::array<sf::Vertex, 2u>{
-      sf::Vertex{ currentSegment.start, startColor },
-      sf::Vertex{ currentSegment.end, endColor }
-    };
-
-    window.draw(line.data(), 2u, sf::PrimitiveType::Lines);
-
-    if (currentSegment.depth < conditions.maxDepth) {
-      const auto& branchLeft = currentSegment.growBranch(TreeBranch::Direction::CCW, conditions);
-      const auto& branchRight = currentSegment.growBranch(TreeBranch::Direction::CW, conditions);
-      branches.push_back(branchLeft);
-      branches.push_back(branchRight);
-    }
-  }
-}
-
-void redraw(sf::RenderWindow& window, const float windowWidth, const float windowHeight) {
-  window.clear(sf::Color::Black);
-
-  const auto trunkStart = sf::Vector2f{ windowWidth / 2.f, windowHeight / 2.f };
-  constexpr auto numTrees = 3u;
-  const auto initialLength = std::min(windowWidth, windowHeight) / 6.f;
-  constexpr auto trunkDeltaAngle = tau / numTrees;
-  auto branches = std::vector<TreeBranch>();
-  for (auto t = 0u; t < numTrees; t++) {
-    const auto angle = -tau / 4.f + trunkDeltaAngle * t;
-    const auto trunkEnd = trunkStart + sf::Vector2f{
-      std::cos(angle) * initialLength,
-      std::sin(angle) * initialLength
-    };
-    branches.push_back({
-      trunkStart,
-      trunkEnd,
-      initialLength,
-      angle,
-      0u
-    });
-  }
-  drawTrees(window, branches);
-
-  window.display();
-}
+using namespace fractal;
+using namespace sf;
+using namespace std;
 
 int main() {
   auto windowWidth = 600u;
   auto windowHeight = 600u;
-  const auto windowMode = sf::VideoMode{ windowWidth, windowHeight };
+  const auto windowMode = VideoMode{ windowWidth, windowHeight };
   constexpr auto windowTitle = "Tree Fractal";
 
-  auto&& window = sf::RenderWindow{ windowMode, windowTitle };
+  auto&& window = RenderWindow{ windowMode, windowTitle };
   auto view = window.getDefaultView();
   window.setFramerateLimit(60);
 
   while (window.isOpen()) {
-    auto event = sf::Event();
+    auto event = Event();
     while (window.pollEvent(event)) {
-      const auto isCtrlPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) or sf::Keyboard::isKeyPressed(sf::Keyboard::RControl);
-      const auto isAltPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) or sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt);
-      const auto isWPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
-      const auto isQPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Q);
-      const auto isF4Pressed = sf::Keyboard::isKeyPressed(sf::Keyboard::F4);
+      const auto isCtrlPressed = Keyboard::isKeyPressed(Keyboard::LControl) or Keyboard::isKeyPressed(Keyboard::RControl);
+      const auto isAltPressed = Keyboard::isKeyPressed(Keyboard::LAlt) or Keyboard::isKeyPressed(Keyboard::RAlt);
+      const auto isWPressed = Keyboard::isKeyPressed(Keyboard::W);
+      const auto isQPressed = Keyboard::isKeyPressed(Keyboard::Q);
+      const auto isF4Pressed = Keyboard::isKeyPressed(Keyboard::F4);
       if ((isCtrlPressed and (isWPressed or isQPressed)) or (isAltPressed and isF4Pressed)) {
         window.close();
         break;
       }
-      if (event.type == sf::Event::Closed) {
+      if (event.type == Event::Closed) {
         window.close();
         break;
-      } else if (event.type == sf::Event::Resized) {
+      } else if (event.type == Event::Resized) {
         windowWidth = static_cast<float>(event.size.width);
         windowHeight = static_cast<float>(event.size.height);
         view.setSize(windowWidth, windowHeight);
@@ -148,7 +52,7 @@ int main() {
         window.setView(view);
       }
     }
-    redraw(window, windowWidth, windowHeight);
+    redrawWindow(window, windowWidth, windowHeight);
   }
 
   return 0;
