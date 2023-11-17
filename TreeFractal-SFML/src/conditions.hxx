@@ -1,11 +1,9 @@
 #ifndef CONDITIONS_HXX
 #define CONDITIONS_HXX
 
-#include <cmath>
-
 #include <SFML/Graphics.hpp>
 
-constexpr auto tau = static_cast<float>(M_PI) * 2.f;
+#include "math.hxx"
 
 namespace fractal {
   class IterateConditions {

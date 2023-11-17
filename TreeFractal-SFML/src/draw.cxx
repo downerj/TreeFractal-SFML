@@ -1,8 +1,7 @@
-#include <cmath>
-
 #include "branch.hxx"
 #include "conditions.hxx"
 #include "draw.hxx"
+#include "math.hxx"
 
 using namespace sf;
 using namespace std;

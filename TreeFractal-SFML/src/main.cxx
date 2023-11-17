@@ -1,11 +1,5 @@
 #include <algorithm>
 #include <array>
-#ifdef _WIN32
-#define _USE_MATH_DEFINES
-#include <math.h>
-#else
-#include <cmath>
-#endif // _WIN32
 #include <iostream>
 #include <utility>
 #include <vector>
