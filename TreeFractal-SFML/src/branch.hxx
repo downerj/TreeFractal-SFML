@@ -4,8 +4,6 @@
 #include <SFML/Graphics.hpp>
 
 namespace fractal {
-  class IterateConditions;
-
   class TreeBranch {
   public:
     const sf::Vector2f start;
@@ -13,12 +11,9 @@ namespace fractal {
     const float length;
     const float angle;
     const unsigned int depth;
-
-    enum class Direction { CCW, CW };
+    const sf::Color color;
 
     TreeBranch() = delete;
-
-    TreeBranch growBranch(Direction direction, const IterateConditions& conditions) const;
   };
 }
 
