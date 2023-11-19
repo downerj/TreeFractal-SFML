@@ -1,7 +1,8 @@
 #include "branch.hxx"
-#include "tree.hxx"
+#include "debug.hxx"
 #include "draw.hxx"
 #include "math.hxx"
+#include "tree.hxx"
 
 using namespace sf;
 using namespace std;
