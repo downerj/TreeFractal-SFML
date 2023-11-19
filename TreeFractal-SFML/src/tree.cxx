@@ -74,7 +74,7 @@ namespace fractal {
     }
     const auto branch = branches.front();
     branches.pop();
-    for (const auto direction : {Direction::CCW, Direction::CW}) {
+    for (const auto direction : { Direction::CCW, Direction::CW }) {
       const auto newStart = branch.end;
       const auto newLength = branch.length * (direction == Direction::CCW ? branchLengthRatioCCW : branchLengthRatioCW);
       const auto newAngle = branch.angle + (direction == Direction::CCW ? -deltaAngleCCW : deltaAngleCW);
@@ -83,8 +83,8 @@ namespace fractal {
         static_cast<float>(sin(newAngle)) * newLength
       };
       const auto newDepth = branch.depth + 1u;
-      const auto color = branch.depth < depthToSwitchColors ? branchColor : leafColor;
-      const auto newBranch = TreeBranch{ newStart, newEnd, newLength, newAngle, newDepth, color };
+      const auto newColor = newDepth < depthToSwitchColors ? branchColor : leafColor;
+      const auto newBranch = TreeBranch{ newStart, newEnd, newLength, newAngle, newDepth, newColor };
       branches.push(newBranch);
     }
   }
