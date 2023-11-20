@@ -31,7 +31,7 @@ namespace fractal {
     public:
       Iterator(Tree&);
       Iterator& operator++();
-      bool operator!=(const Iterator&) const;
+      friend bool operator!=(const Iterator&, const Iterator&);
       TreeBranch& operator*();
       const TreeBranch& operator*() const;
     private:

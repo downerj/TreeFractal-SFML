@@ -27,7 +27,7 @@ release: $(BINDIR)/$(EXECUTABLE)
 debug: DEBUGS = -DDEBUG -Og -g
 debug: $(BINDIR)/$(EXECUTABLE)
 
-$(BINDIR)/$(EXECUTABLE): $(MAIN_OBJ) $(TREE_OBJ) $(DRAW_OBJ)
+$(BINDIR)/$(EXECUTABLE): $(DRAW_OBJ) $(MAIN_OBJ) $(TREE_OBJ)
 	mkdir -p $(BINDIR)
 	$(CXX) -o $@ $^ $(LLIBS)
 
@@ -35,10 +35,12 @@ $(MAIN_OBJ): $(MAIN_CXX) $(BRANCH_HXX) $(TREE_HXX) $(MATH_HXX) $(DEBUG_HXX)
 	mkdir -p $(OBJDIR)
 	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD) $(DEBUGS)
 
-$(TREE_OBJ): $(TREE_CXX) $(TREE_HXX) $(MATH_HXX) $(DEBUG_HXX)
+$(DRAW_OBJ): $(DRAW_CXX) $(DRAW_HXX) $(BRANCH_HXX) $(TREE_HXX) $(MATH_HXX) $(DEBUG_HXX)
+	mkdir -p $(OBJDIR)
 	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD) $(DEBUGS)
 
-$(DRAW_OBJ): $(DRAW_CXX) $(DRAW_HXX) $(BRANCH_HXX) $(TREE_HXX) $(MATH_HXX) $(DEBUG_HXX)
+$(TREE_OBJ): $(TREE_CXX) $(TREE_HXX) $(MATH_HXX) $(DEBUG_HXX)
+	mkdir -p $(OBJDIR)
 	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD) $(DEBUGS)
 
 clean:

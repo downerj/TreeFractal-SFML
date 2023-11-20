@@ -16,6 +16,8 @@ using namespace std;
 int main() {
   auto windowWidth = 600u;
   auto windowHeight = 600u;
+  auto previousWindowWidth = 0u;
+  auto previousWindowHeight = 0u;
   const auto windowMode = VideoMode{ windowWidth, windowHeight };
   constexpr auto windowTitle = "Tree Fractal";
 
@@ -24,6 +26,9 @@ int main() {
   window.setFramerateLimit(60);
 
   while (window.isOpen()) {
+    const auto isDisplayDirty = windowWidth != previousWindowWidth or windowHeight != previousWindowHeight;
+    previousWindowWidth = windowWidth;
+    previousWindowHeight = windowHeight;
     auto event = Event();
     while (window.pollEvent(event)) {
       const auto isCtrlPressed = Keyboard::isKeyPressed(Keyboard::LControl) or Keyboard::isKeyPressed(Keyboard::RControl);
@@ -46,7 +51,9 @@ int main() {
         window.setView(view);
       }
     }
-    redrawWindow(window, windowWidth, windowHeight);
+    if (isDisplayDirty) {
+      redrawWindow(window, windowWidth, windowHeight);
+    }
   }
 
   return 0;

@@ -1,5 +1,4 @@
 #include "branch.hxx"
-#include "debug.hxx"
 #include "draw.hxx"
 #include "math.hxx"
 #include "tree.hxx"

@@ -29,9 +29,6 @@ namespace fractal {
     }
     return *this;
   }
-  bool Tree::Iterator::operator!=(const Iterator& rhs) const {
-    return !(isEnd and rhs.isEnd);
-  }
   TreeBranch& Tree::Iterator::operator*() {
     return tree.branches.front();
   }
@@ -85,5 +82,9 @@ namespace fractal {
       const auto newBranch = TreeBranch{ newStart, newEnd, newLength, newAngle, newDepth, newColor };
       branches.push(newBranch);
     }
+  }
+
+  bool operator!=(const fractal::Tree::Iterator& lhs, const fractal::Tree::Iterator& rhs) {
+    return !lhs.isEnd or !rhs.isEnd;
   }
 }
