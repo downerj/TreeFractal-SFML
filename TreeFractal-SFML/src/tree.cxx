@@ -1,13 +1,10 @@
-#include <SFML/Graphics.hpp>
-
 #include "branch.hxx"
 #include "tree.hxx"
 
-using namespace sf;
-
 namespace fractal {
   Tree::Tree(float trunkX, float trunkY, float trunkLength, float trunkAngle) :
-    trunkStart(Vector2f(trunkX, trunkY)),
+    trunkStartX(trunkX),
+    trunkStartY(trunkY),
     trunkLength(trunkLength),
     trunkAngle(trunkAngle),
     branchLengthRatioCCW(.6f),
@@ -48,14 +45,14 @@ namespace fractal {
   Tree::Iterator Tree::end() { return endIt; }
 
   void Tree::makeTrunk() {
-    const auto trunkEnd = trunkStart + Vector2f{
-      static_cast<float>(cos(trunkAngle)) * trunkLength,
-      static_cast<float>(sin(trunkAngle)) * trunkLength
-    };
+    const auto trunkEndX = trunkStartX + static_cast<float>(cos(trunkAngle)) * trunkLength;
+    const auto trunkEndY = trunkStartY + static_cast<float>(sin(trunkAngle)) * trunkLength;
     const auto trunkDepth = 0u;
     const auto trunk = TreeBranch{
-      trunkStart,
-      trunkEnd,
+      trunkStartX,
+      trunkStartY,
+      trunkEndX,
+      trunkEndY,
       trunkLength,
       trunkAngle,
       trunkDepth,
@@ -71,16 +68,15 @@ namespace fractal {
     const auto branch = branches.front();
     branches.pop();
     for (const auto direction : { Direction::CCW, Direction::CW }) {
-      const auto newStart = branch.end;
+      const auto newStartX = branch.endX;
+      const auto newStartY = branch.endY;
       const auto newLength = branch.length * (direction == Direction::CCW ? branchLengthRatioCCW : branchLengthRatioCW);
       const auto newAngle = branch.angle + (direction == Direction::CCW ? -deltaAngleCCW : deltaAngleCW);
-      const auto newEnd = newStart + Vector2f{
-        static_cast<float>(cos(newAngle)) * newLength,
-        static_cast<float>(sin(newAngle)) * newLength
-      };
+      const auto newEndX = newStartX + static_cast<float>(cos(newAngle)) * newLength;
+      const auto newEndY = newStartY + static_cast<float>(sin(newAngle)) * newLength;
       const auto newDepth = branch.depth + 1u;
       const auto newColor = newDepth < depthToSwitchColors ? branchColor : leafColor;
-      const auto newBranch = TreeBranch{ newStart, newEnd, newLength, newAngle, newDepth, newColor };
+      const auto newBranch = TreeBranch{ newStartX, newStartY, newEndX, newEndY, newLength, newAngle, newDepth, newColor };
       branches.push(newBranch);
     }
   }

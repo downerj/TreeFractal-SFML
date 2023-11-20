@@ -3,8 +3,6 @@
 
 #include <queue>
 
-#include <SFML/Graphics.hpp>
-
 #include "branch.hxx"
 #include "math.hxx"
 
@@ -13,7 +11,8 @@ namespace fractal {
 
   class Tree {
   public:
-    sf::Vector2f trunkStart;
+    float trunkStartX;
+    float trunkStartY;
     float trunkLength;
     float trunkAngle;
     float branchLengthRatioCCW;
@@ -22,8 +21,8 @@ namespace fractal {
     unsigned int depthToSwitchColors;
     float deltaAngleCCW;
     float deltaAngleCW;
-    sf::Color branchColor;
-    sf::Color leafColor;
+    unsigned int branchColor;
+    unsigned int leafColor;
 
     Tree(float trunkX, float trunkY, float trunkLength, float trunkAngle);
 

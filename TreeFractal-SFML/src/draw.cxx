@@ -43,9 +43,12 @@ namespace fractal {
 
     for (auto& tree : trees) {
       for (const auto& branch : tree) {
+        const auto start = Vector2f{ branch.startX, branch.startY };
+        const auto end = Vector2f{ branch.endX, branch.endY };
+        const auto color = Color(branch.color);
         const auto line = array<Vertex, 2u>{
-          Vertex{ branch.start, branch.color },
-          Vertex{ branch.end, branch.color }
+          Vertex{ start, color },
+          Vertex{ end, color }
         };
         window.draw(line.data(), 2u, PrimitiveType::Lines);
       }
