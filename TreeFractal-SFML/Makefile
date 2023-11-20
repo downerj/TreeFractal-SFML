@@ -7,36 +7,41 @@ SRCDIR = src
 CCXXSTD = -std=c++17
 CWARNS = -Wall -Wextra -Werror -Wpedantic -pedantic-errors
 LLIBS = -lsfml-graphics -lsfml-window -lsfml-system -lm
+DEBUGS =
 
 MAIN_OBJ = $(OBJDIR)/main.o
 MAIN_CXX = $(SRCDIR)/main.cxx
-BRANCH_CXX = $(SRCDIR)/branch.cxx
 BRANCH_HXX = $(SRCDIR)/branch.hxx
-BRANCH_OBJ = $(OBJDIR)/branch.o
-CONDITIONS_CXX = $(SRCDIR)/conditions.cxx
-CONDITIONS_HXX = $(SRCDIR)/conditions.hxx
-CONDITIONS_OBJ = $(OBJDIR)/conditions.o
 DRAW_CXX = $(SRCDIR)/draw.cxx
 DRAW_HXX = $(SRCDIR)/draw.hxx
-DRAW_OBJ = $(SRCDIR)/draw.obj
+DRAW_OBJ = $(OBJDIR)/draw.o
 MATH_HXX = $(SRCDIR)/math.hxx
+TREE_CXX = $(SRCDIR)/tree.cxx
+TREE_HXX = $(SRCDIR)/tree.hxx
+TREE_OBJ = $(OBJDIR)/tree.o
+DEBUG_HXX = $(SRCDIR)/debug.hxx
 
-$(BINDIR)/$(EXECUTABLE): $(MAIN_OBJ) $(BRANCH_OBJ) $(CONDITIONS_OBJ) $(DRAW_OBJ)
+release: DEBUGS = -O3
+release: $(BINDIR)/$(EXECUTABLE)
+
+debug: DEBUGS = -DDEBUG -Og -g
+debug: $(BINDIR)/$(EXECUTABLE)
+
+$(BINDIR)/$(EXECUTABLE): $(DRAW_OBJ) $(MAIN_OBJ) $(TREE_OBJ)
 	mkdir -p $(BINDIR)
 	$(CXX) -o $@ $^ $(LLIBS)
 
-$(MAIN_OBJ): $(MAIN_CXX) $(BRANCH_HXX) $(CONDITIONS_HXX) $(MATH_HXX)
+$(MAIN_OBJ): $(MAIN_CXX) $(BRANCH_HXX) $(TREE_HXX) $(MATH_HXX) $(DEBUG_HXX)
 	mkdir -p $(OBJDIR)
-	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD)
+	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD) $(DEBUGS)
 
-$(BRANCH_OBJ): $(BRANCH_CXX) $(BRANCH_HXX) $(CONDITIONS_HXX) $(MATH_HXX)
-	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD)
+$(DRAW_OBJ): $(DRAW_CXX) $(DRAW_HXX) $(BRANCH_HXX) $(TREE_HXX) $(MATH_HXX) $(DEBUG_HXX)
+	mkdir -p $(OBJDIR)
+	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD) $(DEBUGS)
 
-$(CONDITIONS_OBJ): $(CONDITIONS_CXX) $(CONDITIONS_HXX) $(MATH_HXX)
-	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD)
-
-$(DRAW_OBJ): $(DRAW_CXX) $(DRAW_HXX) $(BRANCH_HXX) $(CONDITIONS_HXX) $(MATH_HXX)
-	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD)
+$(TREE_OBJ): $(TREE_CXX) $(TREE_HXX) $(MATH_HXX) $(DEBUG_HXX)
+	mkdir -p $(OBJDIR)
+	$(CXX) -c -o $@ $< $(CWARNS) $(CCXXSTD) $(DEBUGS)
 
 clean:
 	rm -rf $(BINDIR) $(OBJDIR)

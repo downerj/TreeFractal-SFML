@@ -22,6 +22,7 @@ int main() {
   auto&& window = RenderWindow{ windowMode, windowTitle };
   auto view = window.getDefaultView();
   window.setFramerateLimit(60);
+  auto drawHandler = DrawHandler(window, windowWidth, windowHeight);
 
   while (window.isOpen()) {
     auto event = Event();
@@ -44,9 +45,11 @@ int main() {
         view.setSize(windowWidth, windowHeight);
         view.setCenter(windowWidth / 2.f, windowHeight / 2.f);
         window.setView(view);
+        drawHandler.resizeWindow(windowWidth, windowHeight);
       }
     }
-    redrawWindow(window, windowWidth, windowHeight);
+    drawHandler.redraw();
+    window.display();
   }
 
   return 0;
