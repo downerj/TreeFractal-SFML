@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "branch.hxx"
 #include "math.hxx"
 
 namespace fractal {

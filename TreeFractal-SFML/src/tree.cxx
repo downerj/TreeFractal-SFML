@@ -22,7 +22,7 @@ namespace fractal {
 
   Tree::Iterator::Iterator(Tree& tree) : tree(tree), isEnd(true) {}
   Tree::Iterator& Tree::Iterator::operator++() {
-    if (!tree.branches.empty() and tree.branches.front().depth < tree.maxDepth) {
+    if (not tree.branches.empty() and tree.branches.front().depth < tree.maxDepth) {
       tree.replaceBranchWithChildren();
     } else {
       isEnd = true;
@@ -37,9 +37,10 @@ namespace fractal {
   }
 
   Tree::Iterator Tree::begin() {
-    if (branches.empty()) {
-      makeTrunk();
+    while (not branches.empty()) {
+      branches.pop();
     }
+    makeTrunk();
     auto it = Tree::Iterator(*this);
     it.isEnd = false;
     return it;
@@ -85,6 +86,6 @@ namespace fractal {
   }
 
   bool operator!=(const fractal::Tree::Iterator& lhs, const fractal::Tree::Iterator& rhs) {
-    return !lhs.isEnd or !rhs.isEnd;
+    return not lhs.isEnd or not rhs.isEnd;
   }
 }
