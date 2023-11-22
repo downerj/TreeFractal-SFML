@@ -40,9 +40,9 @@ int main() {
         window.close();
         break;
       } else if (event.type == Event::Resized) {
-        windowWidth = static_cast<float>(event.size.width);
-        windowHeight = static_cast<float>(event.size.height);
-        view.setSize(windowWidth, windowHeight);
+        windowWidth = event.size.width;
+        windowHeight = event.size.height;
+        view.setSize(static_cast<float>(windowWidth), static_cast<float>(windowHeight));
         view.setCenter(windowWidth / 2.f, windowHeight / 2.f);
         window.setView(view);
         drawHandler.resizeWindow(windowWidth, windowHeight);
