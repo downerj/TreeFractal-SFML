@@ -109,12 +109,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\downe\source\repos\TreeFractal-SFML\SFML-2.6.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\downe\source\repos\TreeFractal-SFML\TreeFractal-SFML;C:\Users\downe\source\repos\TreeFractal-SFML\SFML-2.6.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir);$(SolutionDir)\SFML\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
@@ -123,9 +123,9 @@
       </Command>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>xcopy /y $(ProjectDir)sfml-graphics-2.dll $(OutDir)
-xcopy /y $(ProjectDir)sfml-window-2.dll $(OutDir)
-xcopy /y $(ProjectDir)sfml-system-2.dll $(OutDir)</Command>
+      <Command>xcopy /y "$(ProjectDir)sfml-graphics-2.dll" "$(OutDir)"
+xcopy /y "$(ProjectDir)sfml-window-2.dll" "$(OutDir)"
+xcopy /y "$(ProjectDir)sfml-system-2.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,7 +145,16 @@ xcopy /y $(ProjectDir)sfml-system-2.dll $(OutDir)</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\draw.cxx" />
     <ClCompile Include="src\main.cxx" />
+    <ClCompile Include="src\tree.cxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\branch.hxx" />
+    <ClInclude Include="src\debug.hxx" />
+    <ClInclude Include="src\draw.hxx" />
+    <ClInclude Include="src\math.hxx" />
+    <ClInclude Include="src\tree.hxx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
