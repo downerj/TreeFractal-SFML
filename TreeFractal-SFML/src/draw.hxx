@@ -8,13 +8,13 @@ namespace fractal {
 
   class DrawHandler {
   public:
-    DrawHandler(sf::RenderWindow& window, const float windowWidth, const float windowHeight);
-    void resizeWindow(const float width, const float height);
+    DrawHandler(sf::RenderWindow& window, const unsigned int windowWidth, const unsigned int windowHeight);
+    void resizeWindow(const unsigned int width, const unsigned int height);
     void redraw();
   private:
     sf::RenderWindow& window;
-    float windowWidth;
-    float windowHeight;
+    unsigned int windowWidth;
+    unsigned int windowHeight;
     bool needsRedraw;
   };
 }
