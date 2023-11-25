@@ -11,8 +11,8 @@ namespace fractal {
     branchLengthRatioCW(.6f),
     maxDepth(8u),
     depthToSwitchColors(5u),
-    deltaAngleCCW(tau / 6.f),
-    deltaAngleCW(tau / 6.f),
+    deltaAngleCCW(60.f),
+    deltaAngleCW(60.f),
     branchColor(0xffaa00ffu),
     leafColor(0x00ff00ffu),
     endIt(Iterator(*this)) {}
@@ -45,8 +45,8 @@ namespace fractal {
   Tree::Iterator Tree::end() { return endIt; }
 
   void Tree::makeTrunk() {
-    const auto trunkEndX = trunkStartX + static_cast<float>(cos(trunkAngle)) * trunkLength;
-    const auto trunkEndY = trunkStartY + static_cast<float>(sin(trunkAngle)) * trunkLength;
+    const auto trunkEndX = trunkStartX + static_cast<float>(cos(trunkAngle * degToRad)) * trunkLength;
+    const auto trunkEndY = trunkStartY + static_cast<float>(sin(trunkAngle * degToRad)) * trunkLength;
     const auto trunkDepth = 0u;
     const auto trunk = TreeBranch{
       trunkStartX,
@@ -72,8 +72,8 @@ namespace fractal {
       const auto newStartY = branch.endY;
       const auto newLength = branch.length * (direction == Direction::CCW ? branchLengthRatioCCW : branchLengthRatioCW);
       const auto newAngle = branch.angle + (direction == Direction::CCW ? -deltaAngleCCW : deltaAngleCW);
-      const auto newEndX = newStartX + static_cast<float>(cos(newAngle)) * newLength;
-      const auto newEndY = newStartY + static_cast<float>(sin(newAngle)) * newLength;
+      const auto newEndX = newStartX + static_cast<float>(cos(newAngle * degToRad)) * newLength;
+      const auto newEndY = newStartY + static_cast<float>(sin(newAngle * degToRad)) * newLength;
       const auto newDepth = branch.depth + 1u;
       const auto newColor = newDepth < depthToSwitchColors ? branchColor : leafColor;
       const auto newBranch = TreeBranch{ newStartX, newStartY, newEndX, newEndY, newLength, newAngle, newDepth, newColor };

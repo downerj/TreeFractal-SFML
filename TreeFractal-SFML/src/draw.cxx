@@ -33,10 +33,11 @@ namespace fractal {
     const auto trunkStartY = windowHeight / 2.f;
     constexpr auto numTrees = 3u;
     const auto trunkLength = min(windowWidth, windowHeight) / 6.f;
-    constexpr auto trunkDeltaAngle = tau / numTrees;
+    constexpr auto trunkDeltaAngle = 360.f / numTrees;
     for (auto t = 0u; t < numTrees; t++) {
-      const auto trunkAngle = -tau / 4.f + trunkDeltaAngle * t;
-      trees.push_back(Tree(trunkStartX, trunkStartY, trunkLength, trunkAngle));
+      const auto trunkAngle = -90.f + trunkDeltaAngle * t;
+      auto tree = Tree(trunkStartX, trunkStartY, trunkLength, trunkAngle);
+      trees.push_back(tree);
     }
 
     window.clear(Color::Black);
