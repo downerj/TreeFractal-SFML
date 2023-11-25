@@ -1,8 +1,12 @@
 #ifndef BRANCH_HXX
 #define BRANCH_HXX
 
+#ifdef DEBUG
+#include <iostream>
+#endif // DEBUG
+
 namespace fractal {
-  class TreeBranch {
+  struct TreeBranch {
   public:
     const float startX;
     const float startY;
@@ -13,7 +17,9 @@ namespace fractal {
     const unsigned int depth;
     const unsigned int color;
 
-    TreeBranch() = delete;
+#ifdef DEBUG
+    friend auto operator<<(std::ostream& out, const TreeBranch& branch) -> std::ostream&;
+#endif // DEBUG
   };
 }
 

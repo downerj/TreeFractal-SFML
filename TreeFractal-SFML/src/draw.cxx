@@ -1,7 +1,10 @@
+#include <forward_list>
+
 #include "branch.hxx"
 #include "debug.hxx"
 #include "draw.hxx"
 #include "math.hxx"
+#include "options.hxx"
 #include "tree.hxx"
 
 using namespace sf;
@@ -14,7 +17,7 @@ namespace fractal {
       windowHeight(windowHeight),
       needsRedraw(true) {}
 
-  void DrawHandler::resizeWindow(const unsigned int width, const unsigned int height) {
+  auto DrawHandler::resizeWindow(const unsigned int width, const unsigned int height) -> void {
     if (width == windowWidth and height == windowHeight) {
       return;
     }
@@ -23,33 +26,51 @@ namespace fractal {
     needsRedraw = true;
   }
 
-  void DrawHandler::redraw() {
+  auto DrawHandler::redraw() -> void {
     if (not needsRedraw) {
       return;
     }
 
-    vector<Tree> trees;
-    const auto trunkStartX = windowWidth / 2.f;
-    const auto trunkStartY = windowHeight;
-    constexpr auto numTrees = 1u;
     const auto trunkLength = min(windowWidth, windowHeight) / 6.f;
-    constexpr auto trunkDeltaAngle = 360.f / numTrees;
-    for (auto t = 0u; t < numTrees; t++) {
-      const auto trunkAngle = -90.f + trunkDeltaAngle * t;
-      auto tree = Tree(trunkStartX, trunkStartY, trunkLength, trunkAngle);
-      tree.deltaAngleCW = 30.f;
-      tree.deltaAngleCCW = tree.deltaAngleCW;
-      tree.branchLengthRatioCW = .8f;
-      tree.branchLengthRatioCCW = tree.branchLengthRatioCW;
-      tree.maxDepth = 11u;
-      tree.depthToSwitchColors = 7u;
-      trees.push_back(tree);
+    constexpr auto initialAngle = -90.f;
+    constexpr auto treeCount = 3u;
+    constexpr auto trunkDeltaAngle = 360.f / treeCount;
+    const auto trunkStartX = windowWidth / 2.f;
+    const auto trunkStartY = windowHeight / 2.f;
+
+    auto trees = forward_list<Tree>();
+    for (auto t = 0u; t < treeCount; ++t) {
+      const auto trunkAngle = initialAngle + trunkDeltaAngle * t;
+      constexpr auto deltaAngleCW = 60.f;
+      constexpr auto deltaAngleCCW = deltaAngleCW;
+      constexpr auto lengthRatioCW = .6f;
+      constexpr auto lengthRatioCCW = lengthRatioCW;
+      constexpr auto maxDepth = 11u;
+      constexpr auto depthToSwitchColors = 7u;
+      constexpr auto branchColor = 0xffaa00ffu;
+      constexpr auto leafColor = 0x00ff00ffu;
+      const auto branchOptions = TreeBranchOptions{
+        trunkStartX,
+        trunkStartY,
+        trunkLength,
+        trunkAngle,
+        lengthRatioCCW,
+        lengthRatioCW,
+        maxDepth,
+        depthToSwitchColors,
+        deltaAngleCCW,
+        deltaAngleCW,
+        branchColor,
+        leafColor
+      };
+      const auto tree = Tree(branchOptions);
+      trees.emplace_front(tree);
     }
 
     window.clear(Color::Black);
 
-    for (auto& tree : trees) {
-      for (const auto& branch : tree) {
+    for (const auto& tree : trees) {
+      for (const auto& branch : tree.branches) {
         const auto start = Vector2f{ branch.startX, branch.startY };
         const auto end = Vector2f{ branch.endX, branch.endY };
         const auto color = Color(branch.color);
