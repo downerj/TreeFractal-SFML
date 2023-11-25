@@ -30,13 +30,19 @@ namespace fractal {
 
     vector<Tree> trees;
     const auto trunkStartX = windowWidth / 2.f;
-    const auto trunkStartY = windowHeight / 2.f;
-    constexpr auto numTrees = 3u;
+    const auto trunkStartY = windowHeight;
+    constexpr auto numTrees = 1u;
     const auto trunkLength = min(windowWidth, windowHeight) / 6.f;
     constexpr auto trunkDeltaAngle = 360.f / numTrees;
     for (auto t = 0u; t < numTrees; t++) {
       const auto trunkAngle = -90.f + trunkDeltaAngle * t;
       auto tree = Tree(trunkStartX, trunkStartY, trunkLength, trunkAngle);
+      tree.deltaAngleCW = 30.f;
+      tree.deltaAngleCCW = tree.deltaAngleCW;
+      tree.branchLengthRatioCW = .8f;
+      tree.branchLengthRatioCCW = tree.branchLengthRatioCW;
+      tree.maxDepth = 11u;
+      tree.depthToSwitchColors = 7u;
       trees.push_back(tree);
     }
 
