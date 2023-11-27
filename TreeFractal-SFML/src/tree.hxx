@@ -1,9 +1,10 @@
 #ifndef TREE_HXX
 #define TREE_HXX
 
-#include <queue>
+#include <forward_list>
 
 #include "branch.hxx"
+#include "options.hxx"
 #include "math.hxx"
 
 namespace fractal {
@@ -11,44 +12,13 @@ namespace fractal {
 
   class Tree {
   public:
-    float trunkStartX;
-    float trunkStartY;
-    float trunkLength;
-    float trunkAngle;
-    float branchLengthRatioCCW;
-    float branchLengthRatioCW;
-    unsigned int maxDepth;
-    unsigned int depthToSwitchColors;
-    float deltaAngleCCW;
-    float deltaAngleCW;
-    unsigned int branchColor;
-    unsigned int leafColor;
-
-    Tree(float trunkX, float trunkY, float trunkLength, float trunkAngle);
-
-    friend class Iterator;
-    class Iterator {
-    public:
-      Iterator(Tree&);
-      Iterator& operator++();
-      friend bool operator!=(const Iterator&, const Iterator&);
-      TreeBranch& operator*();
-      const TreeBranch& operator*() const;
-    private:
-      friend class Tree;
-      Tree& tree;
-      bool isEnd;
-    };
-
-    Iterator begin();
-    Iterator end();
-
+    Tree(const TreeBranchOptions&);
+    std::forward_list<TreeBranch> branches;
   private:
+    const TreeBranchOptions& branchOptions;
     enum class Direction { CCW, CW };
-    Iterator endIt;
-    std::queue<TreeBranch> branches;
-    void makeTrunk();
-    void replaceBranchWithChildren();
+    auto makeTrunk() const -> TreeBranch;
+    auto growChild(const TreeBranch&, const Direction) const -> TreeBranch;
   };
 }
 

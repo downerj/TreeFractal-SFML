@@ -13,7 +13,7 @@ using namespace fractal;
 using namespace sf;
 using namespace std;
 
-int main() {
+auto main() -> int {
   auto windowWidth = 600u;
   auto windowHeight = 600u;
   const auto windowMode = VideoMode{ windowWidth, windowHeight };
