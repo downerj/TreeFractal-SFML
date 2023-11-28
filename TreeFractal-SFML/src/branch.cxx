@@ -3,15 +3,16 @@
 namespace fractal {
 #ifdef DEBUG
   auto operator<<(std::ostream& out, const TreeBranch& branch) -> std::ostream& {
+    const auto& [startX, startY, endX, endY, length, angle, depth, color] = branch;
     out << "TreeBranch("
-      << "startX=" << branch.startX << ", "
-      << "startY=" << branch.startY << ", "
-      << "endX=" << branch.endX << ", "
-      << "endY=" << branch.endY << ", "
-      << "length=" << branch.length << ", "
-      << "angle=" << branch.angle << ", "
-      << "depth=" << branch.depth << ", "
-      << "color=" << branch.color
+      << "startX=" << startX << ", "
+      << "startY=" << startY << ", "
+      << "endX=" << endX << ", "
+      << "endY=" << endY << ", "
+      << "length=" << length << ", "
+      << "angle=" << angle << ", "
+      << "depth=" << depth << ", "
+      << "color=" << color
       << ")";
     return out;
   }
