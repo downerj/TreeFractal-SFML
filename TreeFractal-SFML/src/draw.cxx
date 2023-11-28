@@ -31,37 +31,24 @@ namespace fractal {
       return;
     }
 
-    const auto trunkLength = min(windowWidth, windowHeight) / 6.f;
     constexpr auto initialAngle = -90.f;
     constexpr auto treeCount = 3u;
     constexpr auto trunkDeltaAngle = 360.f / treeCount;
-    const auto trunkStartX = windowWidth / 2.f;
-    const auto trunkStartY = windowHeight / 2.f;
-
     auto trees = forward_list<Tree>();
     for (auto t = 0u; t < treeCount; ++t) {
-      const auto trunkAngle = initialAngle + trunkDeltaAngle * t;
-      constexpr auto deltaAngleCW = 60.f;
-      constexpr auto deltaAngleCCW = deltaAngleCW;
-      constexpr auto lengthRatioCW = .6f;
-      constexpr auto lengthRatioCCW = lengthRatioCW;
-      constexpr auto maxDepth = 11u;
-      constexpr auto depthToSwitchColors = 7u;
-      constexpr auto branchColor = 0xffaa00ffu;
-      constexpr auto leafColor = 0x00ff00ffu;
       const auto branchOptions = TreeBranchOptions{
-        trunkStartX,
-        trunkStartY,
-        trunkLength,
-        trunkAngle,
-        lengthRatioCCW,
-        lengthRatioCW,
-        maxDepth,
-        depthToSwitchColors,
-        deltaAngleCCW,
-        deltaAngleCW,
-        branchColor,
-        leafColor
+        .trunkStartX = windowWidth / 2.f,
+        .trunkStartY = windowHeight / 2.f,
+        .trunkLength = min(windowWidth, windowHeight) / 6.f,
+        .trunkAngle = initialAngle + trunkDeltaAngle * t,
+        .lengthRatioCCW = .6f,
+        .lengthRatioCW = .6f,
+        .maxDepth = 11u,
+        .depthToSwitchColors = 7u,
+        .deltaAngleCCW = 60.f,
+        .deltaAngleCW = 60.f,
+        .branchColor = 0xffaa00ffu,
+        .leafColor = 0x00ff00ffu
       };
       const auto tree = Tree(branchOptions);
       trees.emplace_front(tree);
@@ -73,10 +60,10 @@ namespace fractal {
       for (const auto& branch : tree.branches) {
         const auto start = Vector2f{ branch.startX, branch.startY };
         const auto end = Vector2f{ branch.endX, branch.endY };
-        const auto color = Color(branch.color);
+        const auto drawColor = Color(branch.color);
         const auto line = array<Vertex, 2u>{
-          Vertex{ start, color },
-          Vertex{ end, color }
+          Vertex{ start, drawColor },
+          Vertex{ end, drawColor }
         };
         window.draw(line.data(), 2u, PrimitiveType::Lines);
       }
