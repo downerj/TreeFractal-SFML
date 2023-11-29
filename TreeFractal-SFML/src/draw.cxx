@@ -12,10 +12,10 @@ using namespace std;
 
 namespace fractal {
   DrawHandler::DrawHandler(RenderWindow& window, const unsigned int windowWidth, const unsigned int windowHeight) :
-      window(window),
-      windowWidth(windowWidth),
-      windowHeight(windowHeight),
-      needsRedraw(true) {}
+      window{ window },
+      windowWidth{ windowWidth },
+      windowHeight{ windowHeight },
+      needsRedraw{ true } {}
 
   auto DrawHandler::resizeWindow(const unsigned int width, const unsigned int height) -> void {
     if (width == windowWidth and height == windowHeight) {
@@ -50,7 +50,7 @@ namespace fractal {
         .branchColor = 0xffaa00ffu,
         .leafColor = 0x00ff00ffu
       };
-      const auto tree = Tree(branchOptions);
+      const auto tree = Tree{ branchOptions };
       trees.emplace_front(tree);
     }
 
@@ -60,7 +60,7 @@ namespace fractal {
       for (const auto& branch : tree.branches) {
         const auto start = Vector2f{ branch.startX, branch.startY };
         const auto end = Vector2f{ branch.endX, branch.endY };
-        const auto drawColor = Color(branch.color);
+        const auto drawColor = Color{ branch.color };
         const auto line = array<Vertex, 2u>{
           Vertex{ start, drawColor },
           Vertex{ end, drawColor }

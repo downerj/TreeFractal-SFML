@@ -8,8 +8,8 @@
 using namespace std;
 
 namespace fractal {
-  Tree::Tree(const TreeBranchOptions& branchOptions) : branchOptions(branchOptions) {
-    auto workBranches = queue<TreeBranch>();
+  Tree::Tree(const TreeBranchOptions& branchOptions) : branchOptions{ branchOptions } {
+    auto workBranches = queue<TreeBranch>{};
     const auto trunk = makeTrunk();
     workBranches.push(trunk);
     while (workBranches.front().depth < branchOptions.maxDepth) {

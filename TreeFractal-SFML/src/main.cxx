@@ -22,10 +22,10 @@ auto main() -> int {
   auto&& window = RenderWindow{ windowMode, windowTitle };
   auto view = window.getDefaultView();
   window.setFramerateLimit(60);
-  auto drawHandler = DrawHandler(window, windowWidth, windowHeight);
+  auto drawHandler = DrawHandler{ window, windowWidth, windowHeight };
 
   while (window.isOpen()) {
-    auto event = Event();
+    auto event = Event{};
     while (window.pollEvent(event)) {
       const auto isCtrlPressed = Keyboard::isKeyPressed(Keyboard::LControl) or Keyboard::isKeyPressed(Keyboard::RControl);
       const auto isAltPressed = Keyboard::isKeyPressed(Keyboard::LAlt) or Keyboard::isKeyPressed(Keyboard::RAlt);
