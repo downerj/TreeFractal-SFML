@@ -16,7 +16,7 @@ namespace fractal {
     std::forward_list<TreeBranch> branches;
   private:
     const TreeBranchOptions& branchOptions;
-    enum class Direction { CCW, CW };
+    enum class Direction {CCW, CW};
     auto makeTrunk() const -> TreeBranch;
     auto growChild(const TreeBranch&, const Direction) const -> TreeBranch;
   };
