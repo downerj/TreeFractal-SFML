@@ -6,7 +6,7 @@ namespace fractal {
     const auto& [
       trunkStartX, trunkStartY, trunkLength, trunkAngle, lengthRatioCCW, lengthRatioCW, maxDepth,
       depthToSwitchColors, deltaAngleCCW, deltaAngleCW, branchColor, leafColor
-    ] = options;
+    ]{ options };
     out << "TreeBranchOptions("
       << "trunkStartX=" << trunkStartX << ", "
       << "trunkStartY=" << trunkStartY << ", "
