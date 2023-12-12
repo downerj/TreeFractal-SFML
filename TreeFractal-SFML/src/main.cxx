@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 
+#include "debug.hxx"
 #include "draw.hxx"
 
 using namespace fractal;

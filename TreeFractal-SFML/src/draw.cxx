@@ -15,8 +15,7 @@ namespace fractal {
   DrawHandler::DrawHandler(RenderWindow& window, const unsigned int windowWidth, const unsigned int windowHeight) :
       window{window},
       windowWidth{windowWidth},
-      windowHeight{windowHeight},
-      needsRedraw{true} {}
+      windowHeight{windowHeight} {}
 
   auto DrawHandler::resizeWindow(const unsigned int width, const unsigned int height) -> void {
     if (width == windowWidth and height == windowHeight) {
@@ -24,14 +23,9 @@ namespace fractal {
     }
     windowWidth = width;
     windowHeight = height;
-    needsRedraw = true;
   }
 
   auto DrawHandler::redraw() -> void {
-    if (not needsRedraw) {
-      return;
-    }
-
     constexpr auto initialAngle = -90.f;
     constexpr auto treeCount = 3u;
     constexpr auto trunkDeltaAngle = 360.f / treeCount;
@@ -69,6 +63,5 @@ namespace fractal {
         window.draw(line.data(), 2u, PrimitiveType::Lines);
       }
     }
-    needsRedraw = false;
   }
 }

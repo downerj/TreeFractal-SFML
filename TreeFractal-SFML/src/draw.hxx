@@ -15,7 +15,6 @@ namespace fractal {
     sf::RenderWindow& window;
     unsigned int windowWidth;
     unsigned int windowHeight;
-    bool needsRedraw;
   };
 }
 
