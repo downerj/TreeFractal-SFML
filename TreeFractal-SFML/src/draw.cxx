@@ -1,4 +1,5 @@
 #include <forward_list>
+#include <ranges>
 
 #include "branch.hxx"
 #include "debug.hxx"
@@ -14,8 +15,7 @@ namespace fractal {
   DrawHandler::DrawHandler(RenderWindow& window, const unsigned int windowWidth, const unsigned int windowHeight) :
       window{window},
       windowWidth{windowWidth},
-      windowHeight{windowHeight},
-      needsRedraw{true} {}
+      windowHeight{windowHeight} {}
 
   auto DrawHandler::resizeWindow(const unsigned int width, const unsigned int height) -> void {
     if (width == windowWidth and height == windowHeight) {
@@ -23,34 +23,29 @@ namespace fractal {
     }
     windowWidth = width;
     windowHeight = height;
-    needsRedraw = true;
   }
 
   auto DrawHandler::redraw() -> void {
-    if (not needsRedraw) {
-      return;
-    }
-
-    constexpr auto initialAngle{-90.f};
-    constexpr auto treeCount{3u};
-    constexpr auto trunkDeltaAngle{360.f / treeCount};
-    auto trees{forward_list<Tree>{}};
-    for (auto t{0u}; t < treeCount; ++t) {
-      const auto branchOptions{TreeBranchOptions{
-        .trunkStartX{windowWidth / 2.f},
-        .trunkStartY{windowHeight / 2.f},
-        .trunkLength{min(windowWidth, windowHeight) / 6.f},
-        .trunkAngle{initialAngle + trunkDeltaAngle * t},
-        .lengthRatioCCW{.6f},
-        .lengthRatioCW{.6f},
-        .maxDepth{11u},
-        .depthToSwitchColors{7u},
-        .deltaAngleCCW{60.f},
-        .deltaAngleCW{60.f},
-        .branchColor{0xffaa00ffu},
-        .leafColor{0x00ff00ffu}
-      }};
-      const auto tree{Tree{branchOptions}};
+    constexpr auto initialAngle = -90.f;
+    constexpr auto treeCount = 3u;
+    constexpr auto trunkDeltaAngle = 360.f / treeCount;
+    auto trees = forward_list<Tree>{};
+    for (const auto t : views::iota(0u, treeCount)) {
+      const auto branchOptions = TreeBranchOptions{
+        .trunkStartX = windowWidth / 2.f,
+        .trunkStartY = windowHeight / 2.f,
+        .trunkLength = min(windowWidth, windowHeight) / 6.f,
+        .trunkAngle = initialAngle + trunkDeltaAngle * t,
+        .lengthRatioCCW = .6f,
+        .lengthRatioCW = .6f,
+        .maxDepth = 11u,
+        .depthToSwitchColors = 7u,
+        .deltaAngleCCW = 60.f,
+        .deltaAngleCW = 60.f,
+        .branchColor = 0xffaa00ffu,
+        .leafColor = 0x00ff00ffu
+      };
+      const auto tree = Tree{branchOptions};
       trees.emplace_front(tree);
     }
 
@@ -58,16 +53,15 @@ namespace fractal {
 
     for (const auto& tree : trees) {
       for (const auto& branch : tree.branches) {
-        const auto start{Vector2f{branch.startX, branch.startY}};
-        const auto end{Vector2f{branch.endX, branch.endY}};
-        const auto drawColor{Color{branch.color}};
-        const auto line{array<Vertex, 2u>{
+        const auto start = Vector2f{branch.startX, branch.startY};
+        const auto end = Vector2f{branch.endX, branch.endY};
+        const auto drawColor = Color{branch.color};
+        const auto line = array<Vertex, 2u>{
           Vertex{start, drawColor},
           Vertex{end, drawColor}
-        }};
+        };
         window.draw(line.data(), 2u, PrimitiveType::Lines);
       }
     }
-    needsRedraw = false;
   }
 }
