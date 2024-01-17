@@ -8,7 +8,7 @@
 #include <cmath>
 #endif // _WIN32
 
-constexpr auto tau = static_cast<float>(M_PI) * 2.f;
-constexpr auto degToRad = tau / 360.f;
+constexpr auto tau{static_cast<float>(M_PI) * 2.f};
+constexpr auto degToRad{tau / 360.f};
 
 #endif // MATH_HXX
